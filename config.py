@@ -1,5 +1,4 @@
 import os # 컴퓨터 파일이나 폴더 다룸 
-# ekwjd
 # 1. 경로 설정 
 '''
 __file__ : 현재 실행 중인 이 파이썬 파일 자체 
@@ -24,3 +23,5 @@ TOP_K_FINAL = 100           # 75+75 -> fusion하여 최종 남길 후보 개수
 RRF_K = 60                  # RRF 스무딩 상수 
 BATCH_SIZE = 16             # 배치 크기 
 MAX_SEQ_LENGTH = 512        # SPECTER2 최대 입력 크기 
+PAPER_SIM_WEIGHT = 0.4      # 중복 논문일 경우 가중합 비율 (paper_query) 
+CONTEXT_SIM_WEIGHT = 0.6    # 중복 논문일 경우 가중합 비율 (context_query)

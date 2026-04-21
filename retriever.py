@@ -15,7 +15,7 @@ class FaissRetriever:
         self.index = faiss.read_index(index_path) 
 
         # 2. ID 매핑 딕셔너리 로드 
-        # FAISS는 내부적으로 정수 ID박에 모르기에 실제 논문의 'paper_id'로 바꿔줄 번역기 필요
+        # FAISS는 내부적으로 정수 ID밖에 모르기에 실제 논문의 'paper_id'로 바꿔줄 번역기 필요
         print(f"ID 매핑 데이터 로딩 중 ... ({mapping_dict})")
         self.id_mapping = utils.load_pickle(mapping_dict)
         print(f"인덱스 로드 완료 ... (총 {self.index.ntotal}개 논문 존재)")
@@ -66,7 +66,7 @@ class FaissRetriever:
                     "rank": rank,
                     "paper_id": paper_id,
                     "score": round(float(score), 4),
-                    "source" : source
+                    "source" : source[query_idx]
                 })
 
                 rank += 1

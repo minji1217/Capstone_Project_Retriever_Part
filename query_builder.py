@@ -13,7 +13,7 @@ class QueryBuilder:
         # SPECTER2 모델이 읽을 수 있는 형태로 글자 잘라주는 도구 
         self.tokenizer = AutoTokenizer.from_pretrained(model_name) 
 
-    def extract_all_samples(self, paper_id, full_text, title, abstract, window_size = config.WINDOW_SIZE):
+    def extract_all_samples(self, paper_id, full_text, title, abstract, all_references, window_size = config.WINDOW_SIZE):
         '''
         [다중 인용 처리]
         논문 한 편의 전체 텍스트에서 모든 [CITE] 위치를 찾아 
@@ -22,10 +22,12 @@ class QueryBuilder:
         # 1. paper_id를 인자로 받아 query_id 생성하여 context_queries에 추가 
         context_queries = []
 
+        # 논문의 전체 레퍼런스 목록을 집합으로 만듦 (-> for 정답 제거)
+        all_refs_set = set(all_references if all_references else [])
 
         paper_query = f"{title} [SEP] {abstract}"
 
-        # 1. 텍스트 내의 모든 [CITE] 위치 찾음
+        # 2. 텍스트 내의 모든 [CITE] 위치 찾음
         # 해당 텍스트가 어디서 시작해서 어디에서 끝나는지에 대한 정보 가진 객체 return 
         # 예: [CITE:paper_id_123] 형태라면 r"\[CITE:(.*?)\]" 사용
         matches = list(re.finditer(self.cite_tag, full_text))
@@ -34,7 +36,7 @@ class QueryBuilder:
         for idx, match in enumerate(matches):
             start_pos = match.start()
 
-            # 2. GT 추출 
+            # 3. GT 추출 
             # match.group(1)은 정규식 (.*?)에 걸린 문자열 (예: "paper_A, paper_B")
             raw_ids = match.group(1) # 1: 정규식 패턴 안의 첫 번째 () 영역에 해당하는 텍스트 
 
@@ -43,11 +45,11 @@ class QueryBuilder:
             target_ids = [target_id.strip() for target_id in raw_ids.split(",") if target_id.strip()]
             # for -> if -> [strip()]
 
-            # 3. [for 효율성] 해당 인용구 직전의 텍스트 슬라이싱 (placeholder 전 1000글자 정도 1차로 가져옴, 약 150~200단어)
+            # 4. [for 효율성] 해당 인용구 직전의 텍스트 슬라이싱 (placeholder 전 1000글자 정도 1차로 가져옴, 약 150~200단어)
             buffer_zone = max(0, start_pos - 1000)
             raw_snippet = full_text[buffer_zone:start_pos]
 
-            # 4. [for 정밀화] 토큰 단위로 변환 후 뒤에서부터 추출 
+            # 5. [for 정밀화] 토큰 단위로 변환 후 뒤에서부터 추출 
             # 토크나이저로 쪼갠 뒤, 정확히 window_size만큼 가져옴
             tokens = self.tokenizer.encode(raw_snippet, add_special_tokens = False) # [CLS], [SEP] 같은 특수 기호 뺌 
             selected_tokens = tokens[-window_size:]
@@ -55,7 +57,7 @@ class QueryBuilder:
             # 잘라낸 토큰들을 다시 텍스트로 복원 
             context = self.tokenizer.decode(selected_tokens, skip_special_tokens = True)
 
-            # 5. 토큰을 강제로 자르면 깨질 수 있기에 (ex. ##ing) 첫번째 공백을 찾아서 그 이후의 온전한 텍스트부터 가져옴
+            # 6. 토큰을 강제로 자르면 깨질 수 있기에 (ex. ##ing) 첫번째 공백을 찾아서 그 이후의 온전한 텍스트부터 가져옴
             # "##ing research paper" -> "research paper"
             if " " in context:
                 # 첫번째 공백 위치를 찾고, 그 공백 바로 다음 글자부터 끝까지 다시 가져옴
@@ -80,7 +82,7 @@ class QueryBuilder:
             })
             '''
 
-            # 6. 쿼리 2개에 대해 union
+            # 7. 쿼리 2개에 대해 union
             # Paper Query (Title + Abstract) -> for문 밖에서 생성 
             # Abstract는 512 토큰 초과 방지 위해 앞 150단어, title은 앞 30단어로 제한
             ''' 
@@ -95,12 +97,17 @@ class QueryBuilder:
             # query_id 생성 (예: paper_id = 123, placeholder_idx = 0 -> 123_0 )
             q_id = f"{paper_id}_{idx:02d}"
 
-            # 7. 최종 결과 딕셔너리로 묶어 리스트에 추가
+            # 전체 레퍼런스 집합에서 현재 쿼리 정답 집합을 빼서 누수 방지
+            safe_bibs = list(all_refs_set - set(target_ids))
+
+            # 8. 최종 결과 딕셔너리로 묶어 리스트에 추가
             context_queries.append({
+                "paper_id" : paper_id,
                 "query_id" : q_id,
                 "context_query" : context_query,
                 "context_pos" : start_pos, # [CITE]가 몇 번째 위치였는지 체크 용도 
-                "target_ids" : target_ids # FAISS 검색 후 채점할 때 쓸 GT 
+                "target_ids" : target_ids, # FAISS 검색 후 채점할 때 쓸 GT 
+                "bib_ids" : safe_bibs 
             })
 
         

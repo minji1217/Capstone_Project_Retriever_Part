@@ -57,7 +57,7 @@ class SpecterEmbedder:
                 batch_texts, # batch 단위로 나눈 텍스트 리스트 (예: 문자열 16개 들어있는 리스트)
                 padding=True, # 짧은 문장의 남는 공간은 의미 없는 토큰([PAD])으로 채움 
                 truncation=True, 
-                max_length= config.MAX_SEQ_LENGTH, # truncation 기준이 되는 최대 토큰 수 
+                max_length=config.MAX_SEQ_LENGTH, # truncation 기준이 되는 최대 토큰 수 
                 return_tensors="pt" # 결과물을 파이썬 기본 리스트가 아닌 텐서 형태로 바꿔줌 (파이토치 수학 연산 전용 데이터)
             ).to(self.device) 
             # CPU로 query를 토큰화(글자 -> 숫자 ID)

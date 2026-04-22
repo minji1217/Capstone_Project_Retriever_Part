@@ -73,8 +73,8 @@ def rank_fusion(paper_query_results, context_query_results):
                 "query_id" : q_id,  # 한 논문의 한 placeholder에서
                 "rank" : new_rank + 1,
                 "paper_id" : pid,
-                "rrf_score" : round(info['rrf_score'], 6),
-                "sim" : final_sim # 1개의 대표 점수 
+                "rrf_score" : round(info['rrf_score'], 6), # Fusion ranking시 사용한 점수
+                "sim" : final_sim # 1개의 대표 점수로, 나중에 sim(q,p)계산시 사용됨 
             })
 
         final_results.append(placeholder_results)

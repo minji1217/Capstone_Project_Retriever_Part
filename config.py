@@ -5,11 +5,18 @@ __file__ : 현재 실행 중인 이 파이썬 파일 자체
 abspath 통해 파일의 전체 주소를 절대 경로로 바꿔줌
 os.path.dirname :  전체 주소에서 파일 이름은 빼고, 그 파일이 들어있는 폴더 주소만 가져옴
 '''
-
 BASE_DIR = os.path.dirname(os.path.abspath(__file__)) # 기본 폴더 작성 
-EMBEDDING_DB_PATH = os.path.join(BASE_DIR, "", "") # 논문id-SPECTER2 임베딩 매핑 저장 파일 경로 
-FAISS_INDEX_PATH = os.path.join(BASE_DIR, "", "") # 실제 FAISS 인덱스 저장 파일 경로
-ID_MAPPING_PATH = os.path.join(BASE_DIR, "", "") # 인덱스-논문 매핑 저장 파일 경로 
+DATA_DIR = os.path.join(BASE_DIR, "data")
+
+EMBEDDING_DB_PATH = os.path.join(DATA_DIR, ".pkl") # 논문id-SPECTER2 임베딩 매핑 저장 파일 경로 
+FAISS_INDEX_PATH = os.path.join(DATA_DIR, ".index") # 실제 FAISS 인덱스 저장 파일 경로
+ID_MAPPING_PATH = os.path.join(DATA_DIR, ".pkl") # FAISS 인덱스-논문 매핑 저장 파일 경로 
+
+
+# 1-1. 데이터 경로 
+
+VAL_DATA_PATH = os.path.join(DATA_DIR, "val_dataset.json") # 튜닝 위한 val 데이터셋
+TEST_DATA_PATH = os.path.join(DATA_DIR, "test_dataset.json") # 최종 평가용 test 데이터셋 
 
 # 2. 모델/정규식
 MODEL_NAME = "allenai/specter2_base"
@@ -26,3 +33,4 @@ BATCH_SIZE = 16             # 배치 크기
 MAX_SEQ_LENGTH = 512        # SPECTER2 최대 입력 크기 
 PAPER_SIM_WEIGHT = 0.4      # 중복 논문일 경우 가중합 비율 (paper_query) 
 CONTEXT_SIM_WEIGHT = 0.6    # 중복 논문일 경우 가중합 비율 (context_query)
+

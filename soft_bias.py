@@ -59,4 +59,5 @@ class SoftBiasScorer:
             weights = decay_factor ** np.arange(len(sorted_sims)) # 0,1,2,...
             item['bib_score'] = float(np.sum(sorted_sims * weights))
 
-            return candidate_list
+            
+        return candidate_list

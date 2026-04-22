@@ -28,7 +28,24 @@ def load_json(file_path):
         return json.load(f)
     
 
+import numpy as np
+
 def normalize(values):
-    v_min, v_max = np.min(values), np.max(values)
-    if v_max - v_min == 0: return [0.0] * len(values) # 모든 점수가 같을 때 예외처리
-    return (values - v_min) / (v_max - v_min)
+    """
+    Min-Max Scaling을 수행하여 모든 값을 [0, 1] 범위로 변환.
+    """
+    values = np.array(values, dtype=float) 
+    
+    if values.size == 0:
+        return values
+        
+    v_min = np.min(values)
+    v_max = np.max(values)
+    diff = v_max - v_min
+    
+    # 모든 값이 같거나 차이가 없는 경우 (Zero Division 방지)
+    if diff < 1e-8:
+        return np.zeros_like(values, dtype=float)
+        
+    # 벡터화된 Min-Max 정규화 연산
+    return (values - v_min) / diff

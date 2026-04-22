@@ -1,4 +1,5 @@
 import json
+import numpy as np
 import pickle # 파이썬 객체(리스트, 딕셔너리 등)를 있는 그대로 파일로 저장 or 다시 불러올 수 있게 해주는 lib
 
 
@@ -25,4 +26,9 @@ def save_json(data, file_path):
 def load_json(file_path):
     with open(file_path, "r", encoding = "utf-8") as f:
         return json.load(f)
+    
 
+def normalize(values):
+    v_min, v_max = np.min(values), np.max(values)
+    if v_max - v_min == 0: return [0.0] * len(values) # 모든 점수가 같을 때 예외처리
+    return (values - v_min) / (v_max - v_min)

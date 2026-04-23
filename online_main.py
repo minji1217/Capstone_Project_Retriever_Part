@@ -42,21 +42,17 @@ class OnlinePaperProcess:
         p_res = self.retriever.search(p_vec, [req_id], source=["paper"], similarity_threshold=-1.0)
         c_res = self.retriever.search(c_vec, [req_id], source=["context"], similarity_threshold=-1.0)
         
-        # 🚨 [수문장 1] FAISS가 몇 개를 찾았나?
-        print(f"👉 [Debug] p_res 타입: {type(p_res)}, 길이: {len(p_res)}")
+        print(f" [Debug] p_res 타입: {type(p_res)}, 길이: {len(p_res)}")
 
         # 4. RRF 융합
         fused = rank_fusion(p_res, c_res)[0]
-        # 🚨 [수문장 2] 융합 후 몇 개가 살아남았나?
-        print(f"👉 [Debug] fused 개수: {len(fused)}")
+        print(f" [Debug] fused 개수: {len(fused)}")
 
         # 5. Soft Bias 계산
         bib_ids = user_input.get('bib_ids', [])
         biased = self.bib_scorer.soft_bias(fused, bib_ids)
-        # 🚨 [수문장 3] 편향 점수 적용 후 몇 개가 남았나?
-        print(f"👉 [Debug] biased 개수: {len(biased)}")
+        print(f" [Debug] biased 개수: {len(biased)}")
 
-        # ... (정규화 부분 동일) ...
 
         # 6. 피처 정규화 
         raw_sims = [c['sim'] for c in biased]

@@ -49,3 +49,12 @@ def normalize(values):
         
     # 벡터화된 Min-Max 정규화 연산
     return (values - v_min) / diff
+
+import datetime
+
+def get_timestamp():
+    """
+    온라인 요청 추적을 위한 고유 타임스탬프 생성
+    형식: YYYYMMDD_HHMMSS_밀리초 (예: 20260423_143154_123)
+    """
+    return datetime.datetime.now().strftime("%Y%m%d_%H%M%S_%f")[:19]

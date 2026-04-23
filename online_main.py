@@ -38,16 +38,25 @@ class OnlinePaperProcess:
         vecs = self.embedder.encode([p_query, c_query])
         p_vec, c_vec = vecs[0:1], vecs[1:2]
 
-        # 3. FAISS 검색
-        p_res = self.retriever.search(p_vec, [req_id], source = ["paper"])
-        c_res = self.retriever.search(c_vec, [req_id], source = ["context"])
+        # 3. FAISS 고속 검색
+        p_res = self.retriever.search(p_vec, [req_id], source=["paper"], similarity_threshold=-1.0)
+        c_res = self.retriever.search(c_vec, [req_id], source=["context"], similarity_threshold=-1.0)
+        
+        # 🚨 [수문장 1] FAISS가 몇 개를 찾았나?
+        print(f"👉 [Debug] p_res 타입: {type(p_res)}, 길이: {len(p_res)}")
 
         # 4. RRF 융합
         fused = rank_fusion(p_res, c_res)[0]
+        # 🚨 [수문장 2] 융합 후 몇 개가 살아남았나?
+        print(f"👉 [Debug] fused 개수: {len(fused)}")
 
-        # 5. Soft bias 계산
+        # 5. Soft Bias 계산
         bib_ids = user_input.get('bib_ids', [])
         biased = self.bib_scorer.soft_bias(fused, bib_ids)
+        # 🚨 [수문장 3] 편향 점수 적용 후 몇 개가 남았나?
+        print(f"👉 [Debug] biased 개수: {len(biased)}")
+
+        # ... (정규화 부분 동일) ...
 
         # 6. 피처 정규화 
         raw_sims = [c['sim'] for c in biased]
@@ -74,23 +83,37 @@ if __name__ == "__main__":
     # 서버 객체 생성
     engine = OnlinePaperProcess()
     
-    # 프론트엔드에서 날아온 가상의 JSON 데이터
+    # 프론트엔드에서 받은 가상의 JSON 데이터
     sample = {
-        "title": "Large Language Models for RecSys",
-        "abstract": "This paper explores...",
-        "context_chunk": "기존의 NCF 모델의 한계를 극복하기 위해 최근 LLM을 활용한 추천 시스템이 각광받고 있다 \\cite{",
-        "bib_ids": ["Koren2009", "He2017"]
+    "title": "Towards Autonomous LLM Agents for Recommendation",
+    "abstract": "This paper investigates the potential of Large Language Models as autonomous agents in recommendation systems. We focus on overcoming existing controller limitations during autonomous interaction...",
+    "context": "LLM 에이전트를 활용한 추천 시스템에서 가장 큰 과제 중 하나는 프로파일 기반 결정 로직을 넘어선 진정한 의미의 자율적 상호작용(autonomous interaction)을 구현하는 것이다. 특히 기존 컨트롤러의 한계를 지적한 연구들을 살펴보면 \\cite{",
+    "bib_ids": ["Wang2023_AgentCF", "ToolRec2024"]
     }
     
     print("\n 실시간 피처 추출 시작...")
     start_time = time.time()
     
-    # 파이프라인 시작
+    # 파이프라인 가동!
     result = engine.get_features(sample)
     
-    print(f"처리 완료. 소요 시간: {time.time() - start_time:.4f}초")
+    print(f"처리 완료! 소요 시간: {time.time() - start_time:.4f}초")
     print(f"반환된 후보 개수: {len(result['candidates'])}개")
-    print(f"첫 번째 후보 샘플: {result['candidates'][0]}")
+    
+    
+    # 리스트가 비어있을 때 IndexError가 나지 않도록 조건문 추가
+    if len(result['candidates']) > 0:
+        print(f"첫 번째 후보 샘플: {result['candidates'][0]}")
+        print(f"첫 번째 후보 샘플: {result['candidates'][1]}")
+        print(f"첫 번째 후보 샘플: {result['candidates'][2]}")
+        print(f"첫 번째 후보 샘플: {result['candidates'][3]}")
+        print(f"첫 번째 후보 샘플: {result['candidates'][4]}")
+        
+    else:
+        print("후보가 없습니다! 위쪽 Debug 로그에서 어디서 0이 되었는지 확인하세요.")
+
+    utils.save_json(result, "output.json")
+    print("output.json에 저장")
 
 
     

@@ -8,10 +8,20 @@ os.path.dirname :  전체 주소에서 파일 이름은 빼고, 그 파일이 �
 BASE_DIR = os.path.dirname(os.path.abspath(__file__)) # 기본 폴더 작성 
 DATA_DIR = os.path.join(BASE_DIR, "data")
 
-EMBEDDING_DB_PATH = os.path.join(DATA_DIR, ".pkl") # 논문id-SPECTER2 임베딩 매핑 저장 파일 경로 
-FAISS_INDEX_PATH = os.path.join(DATA_DIR, ".index") # 실제 FAISS 인덱스 저장 파일 경로
-ID_MAPPING_PATH = os.path.join(DATA_DIR, ".pkl") # FAISS 인덱스-논문 매핑 저장 파일 경로 
+# EMBEDDING_DB_PATH = os.path.join(DATA_DIR, ".pkl") # 논문id-SPECTER2 임베딩 매핑 저장 파일 경로 
+# FAISS_INDEX_PATH = os.path.join(DATA_DIR, ".index") # 실제 FAISS 인덱스 저장 파일 경로
+# ID_MAPPING_PATH = os.path.join(DATA_DIR, ".pkl") # FAISS 인덱스-논문 매핑 저장 파일 경로 
 
+# 테스트용 
+import os
+
+# 현재 config.py 파일이 위치한 폴더의 절대 경로를 계산
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+# 더미 데이터 경로를 BASE_DIR과 합쳐서 '절대 경로'로 못 박아버림
+FAISS_INDEX_PATH = os.path.join(BASE_DIR, "dummy_faiss.index")
+ID_MAPPING_PATH = os.path.join(BASE_DIR, "dummy_mapping.pkl")
+EMBEDDING_DB_PATH = os.path.join(BASE_DIR, "dummy_embed_db.pkl")
 
 # 1-1. 데이터 경로 
 

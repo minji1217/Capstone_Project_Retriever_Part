@@ -115,27 +115,22 @@ class QueryBuilder:
     
     def build_online_query(self, user_input_text, title = "", abstract = "", window_size = config.WINDOW_SIZE):
         '''
-        [실시간 쿼리 빌더] 유저가 \cite{ 를 입력한 직후 전송된 텍스트 파싱
+        [실시간 쿼리 빌더] 유저가 \\cite{ 를 입력한 직후 전송된 텍스트(\\cite{ 이전 1000글자 정도) 파싱
         '''
 
         # 1. 유저가 입력한 텍스트에서 \cite{ 의 정확한 위치 찾음 
-        target_mark = "\\cite{"
-        start_pos = user_input_text.find(target_mark)
+        raw_snippet = user_input_text.replace("\\cite{", "").strip()
 
-        # 2. \cite{ 직전 텍스트 슬라이싱 (테스트때와 동일하게 버퍼 1000글자 정도)
-        buffer_zone = max(0, start_pos - 1000)
-        raw_snippet = user_input_text[buffer_zone:start_pos]
-
-        # 3. 토큰 제한 (window_size 100개 토큰만큼 정확히 자르기)
+        # 2. 토큰 제한 (window_size 100개 토큰만큼 정확히 자르기)
         tokens = self.tokenizer.encode(raw_snippet, add_special_tokens = False)
         selected_tokens = tokens[-window_size:]
         context = self.tokenizer.decode(selected_tokens, skip_special_tokens = True)
         
-        # 4. 토큰 단위로 잘랐을 때 생기는 깨진 단어 포함 방지
+        # 3. 토큰 단위로 잘랐을 때 생기는 깨진 단어 포함 방지
         if " " in context:
             context = context[context.find(" ") + 1:].strip()
 
-        # 5. 최종 쿼리 생성 (paper_query, context_query 생성)
+        # 4. 최종 쿼리 생성 (paper_query, context_query 생성)
         paper_query = f"{title} [SEP] {abstract}".strip()
         context_query = context
 

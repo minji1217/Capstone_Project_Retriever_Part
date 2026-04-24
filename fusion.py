@@ -2,6 +2,8 @@ import numpy as np
 import config 
 
 def rank_fusion(paper_query_results, context_query_results):
+    print(f"[Debug] FAISS가 가져온 p_res 길이: {len(paper_query_results[0])}")
+    print(f"[Debug] FAISS가 가져온 c_res 길이: {len(context_query_results[0])}")
     '''
     [RRF 기반 배치 단위 Fusion Logic]
     1. paper_query_results : Paper query 검색 결과 top-k (배치)
@@ -13,7 +15,8 @@ def rank_fusion(paper_query_results, context_query_results):
     '''
     final_results = []
     k_val = config.RRF_K
-
+    
+    # 한 논문의 한 placeholder에서의 paper/context query에 대해 수행
     for p_res, c_res in zip(paper_query_results, context_query_results):
         fusion_result = {}
 
@@ -51,6 +54,7 @@ def rank_fusion(paper_query_results, context_query_results):
         placeholder_results = []
         for new_rank, (pid, info) in enumerate(sorted_items[:config.TOP_K_FINAL]):
             # p_res[0]['query_id']도 가능 
+            # 현재 묶음의 query_id 가져오기 
             q_id = (
                 c_res[0]['query_id'] if c_res 
                 else p_res[0]['query_id'] if p_res

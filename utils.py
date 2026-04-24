@@ -1,7 +1,7 @@
 import json
 import numpy as np
 import pickle # 파이썬 객체(리스트, 딕셔너리 등)를 있는 그대로 파일로 저장 or 다시 불러올 수 있게 해주는 lib
-
+import datetime
 
 # pickle 파일은 이진데이터이므로 read binary 모드로 
 # 이진파일을 원래의 파이썬 딕셔너리 형태로 변환 
@@ -28,8 +28,6 @@ def load_json(file_path):
         return json.load(f)
     
 
-import numpy as np
-
 def normalize(values):
     """
     Min-Max Scaling을 수행하여 모든 값을 [0, 1] 범위로 변환.
@@ -50,7 +48,7 @@ def normalize(values):
     # 벡터화된 Min-Max 정규화 연산
     return (values - v_min) / diff
 
-import datetime
+
 
 def get_timestamp():
     """

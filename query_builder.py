@@ -19,7 +19,7 @@ class QueryBuilder:
         논문 한 편의 전체 텍스트에서 모든 [CITE] 위치를 찾아 
         각각 (Paper Query, Context Query, Target_Index) 리스트 반환 
         '''
-        # 1. paper_id를 인자로 받아 query_id 생성하여 context_queries에 추가 
+        # 1. paper_id를 인자로 받아 query_id (7단계에서 수행) 생성하여 context_queries에 추가 
         context_queries = []
 
         # 논문의 전체 레퍼런스 목록을 집합으로 만듦 (-> for 정답 제거)
@@ -115,7 +115,7 @@ class QueryBuilder:
     
     def build_online_query(self, user_input_text, title = "", abstract = "", window_size = config.WINDOW_SIZE):
         '''
-        [실시간 쿼리 빌더] 유저가 \\cite{ 를 입력한 직후 전송된 텍스트(\\cite{ 이전 1000글자 정도) 파싱
+        [실시간 쿼리 빌더] 유저가 \\cite{ 를 입력한 직후 전송된 텍스트(현재 커서 이전 1000글자 정도) 파싱
         '''
 
         # 1. 유저가 입력한 텍스트에서 \cite{ 의 정확한 위치 찾음 

@@ -35,7 +35,7 @@ class SpecterEmbedder:
         self.model.eval()
         print(f"SPECTER2 준비 완료 (사용 장치 : {self.device})")
 
-    def encode(self, texts, batch_size = config.BATCH_SIZE):
+    def encode(self, texts, batch_size = config.QUERY_BATCH_SIZE):
         '''
         텍스트 리스트 입력받아 FAISS에서 검색 가능한 벡터 리스트 반환
         texts : 문자열 리스트 (예: [paper_query] or [context_query1, context_query2,...])

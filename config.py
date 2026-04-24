@@ -12,16 +12,18 @@ DATA_DIR = os.path.join(BASE_DIR, "data")
 # FAISS_INDEX_PATH = os.path.join(DATA_DIR, ".index") # 실제 FAISS 인덱스 저장 파일 경로
 # ID_MAPPING_PATH = os.path.join(DATA_DIR, ".pkl") # FAISS 인덱스-논문 매핑 저장 파일 경로 
 
-# 테스트용 
-import os
 
-# 현재 config.py 파일이 위치한 폴더의 절대 경로를 계산
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-
+# 테스트용(온라인)
 # 더미 데이터 경로를 BASE_DIR과 합쳐서 '절대 경로'로 못 박아버림
-FAISS_INDEX_PATH = os.path.join(BASE_DIR, "dummy_faiss.index")
-ID_MAPPING_PATH = os.path.join(BASE_DIR, "dummy_mapping.pkl")
-EMBEDDING_DB_PATH = os.path.join(BASE_DIR, "dummy_embed_db.pkl")
+FAISS_INDEX_PATH = os.path.join(DATA_DIR, "dummy_faiss.index")
+ID_MAPPING_PATH = os.path.join(DATA_DIR, "dummy_mapping.pkl")
+EMBEDDING_DB_PATH = os.path.join(DATA_DIR, "dummy_embed_db.pkl")
+
+# 테스트용(오프라인)
+# FAISS_INDEX_PATH = "dummy_faiss.index"
+# ID_MAPPING_PATH = "dummy_mapping.pkl"
+# EMBEDDING_DB_PATH = "dummy_embed_db.pkl"
+# EVAL_DATA_PATH = "test_eval_data.json" # 이 파일이 배치처리됨
 
 # 1-1. 데이터 경로 
 
@@ -39,7 +41,8 @@ SIMILARITY_THRESHOLD = 0.6  # FAISS 코사인 유사도 최소 임계값
 TOP_K_RETRIEVAL = 75        # 1차 FAISS 검색에서 Paper/Context Query에 대해 관련 논문 각각 뽑을 개수 
 TOP_K_FINAL = 100           # 75+75 -> fusion하여 최종 남길 후보 개수 
 RRF_K = 60                  # RRF 스무딩 상수 
-BATCH_SIZE = 16             # 배치 크기 
+PAPER_BATCH_SIZE = 32       # 논문 배치 크기 (for main)
+QUERY_BATCH_SIZE = 16       # 쿼리 배치 크기 (for encode) 
 MAX_SEQ_LENGTH = 512        # SPECTER2 최대 입력 크기 
 PAPER_SIM_WEIGHT = 0.4      # 중복 논문일 경우 가중합 비율 (paper_query) 
 CONTEXT_SIM_WEIGHT = 0.6    # 중복 논문일 경우 가중합 비율 (context_query)

@@ -7,7 +7,7 @@ from embedder import SpecterEmbedder
 from retriever import FaissRetriever
 from fusion import rank_fusion
 from soft_bias import SoftBiasScorer
-from evaluate import calculate_metrics
+
 
 def process_paper_batch(paper_batch, query_builder, embedder, retriever, bib_scorer):
     # paper_batch : eval_data에서 32개 논문 가져온 리스트 (json 형태)
@@ -112,7 +112,7 @@ def process_paper_batch(paper_batch, query_builder, embedder, retriever, bib_sco
 
 
 
-def run_pipeline(data_path, paper_batch_size = 32):
+def run_pipeline(data_path, paper_batch_size):
     '''
     [동작 방식] 전체 데이터셋을 논문 단위로 쪼개고, 논문 내에서도 context 단위로 쪼개어 동작
     '''
@@ -128,7 +128,7 @@ def run_pipeline(data_path, paper_batch_size = 32):
     # 2. 데이터셋 로드 (정답지 포함된 JSON 파일)
     eval_data = utils.load_json(data_path)
     total_papers = len(eval_data)
-    all_processed_queries = [] # 모든 배치를 1차원으로 통합할 리스트
+    all_processed_queries = [] # 모든 배치를 1차원으로 통합할 리스트 (할지말지 고민)
 
     print(f"총 논문 개수 : {total_papers}개 (논문 {paper_batch_size}개씩 묶어서 처리")
 
@@ -139,15 +139,18 @@ def run_pipeline(data_path, paper_batch_size = 32):
         print(f"처리 중 ... 논문 [{i} ~ {min(i + paper_batch_size, total_papers)}] / {total_papers}")
 
         batch_results = process_paper_batch(paper_batch, query_builder, embedder, retriever, bib_scorer)
-        all_processed_queries.extend(batch_results)
-
+        
+        # 다음 파트에 합치기 (batch_results 이용할지 말지)
+    
     
     print(f"[최종 성능 평가 결과]")
     print(f"총 소요시간 : {time.time() - start_time: .2f}초")
 
-    return all_processed_queries
+    # 뭐를 return할지 
+
+    
 
 if __name__ == "__main__":
-    final_data = run_pipeline(config.EVAL_DATA_PATH, paper_batch_size=32)
-    utils.save_pickle("retriever.pkl", final_data) 
-    print("'retriever.pkl' 저장 완료")
+    final_data = run_pipeline(config.EVAL_DATA_PATH, config.PAPER_BATCH_SIZE)
+    utils.save_json("retriever.json", final_data) 
+    print("'retriever.json' 저장 완료")

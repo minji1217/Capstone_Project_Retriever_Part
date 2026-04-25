@@ -2,8 +2,9 @@ import numpy as np
 import config 
 
 def rank_fusion(paper_query_results, context_query_results):
-    print(f"[Debug] FAISS가 가져온 p_res 길이: {len(paper_query_results[0])}")
-    print(f"[Debug] FAISS가 가져온 c_res 길이: {len(context_query_results[0])}")
+    # 실제 온라인 디버그용
+    # print(f"[Debug] FAISS가 가져온 p_res 길이: {len(paper_query_results[0])}")
+    # print(f"[Debug] FAISS가 가져온 c_res 길이: {len(context_query_results[0])}")
     '''
     [RRF 기반 배치 단위 Fusion Logic]
     1. paper_query_results : Paper query 검색 결과 top-k (배치)
@@ -29,6 +30,8 @@ def rank_fusion(paper_query_results, context_query_results):
                 "context_sim" : 0.0
             }
 
+        
+
         # 2. Context query 결과 저장 
         for item in c_res:
             pid = item['paper_id']
@@ -42,8 +45,10 @@ def rank_fusion(paper_query_results, context_query_results):
                     "paper_sim" : 0.0,
                     "context_sim" : item['score']
                 }
+        # fusion_result : {"pid": {"rrf_score":, "paper_sim": ,...}, "pid": ''}
 
         # 3. rrf_score 기준으로 정렬
+        # items() : dict에 있는 key, value를 한 쌍(튜플)으로 묶어서 리스트처럼 
         # items 예시 : [(pid, {"rrf_score: 0, "paper_sim: 0", "context_sim: 0"}), ...]
         # x[0] : pid, x[1] : {...}
         # 결과 : 튜플들 저장된 리스트 

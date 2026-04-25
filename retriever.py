@@ -26,7 +26,7 @@ class FaissRetriever:
         1. param query_vector: embedder.encode()에서 나온 768차원 Numpy 배열 (배치 쿼리일 경우, shape: N, 768)
         2. query_ids : 단일/배치 모두 리스트 형태로, 쿼리 id 담긴 리스트 
         3. source : 각 쿼리가 paper/context query인지 나타냄
-        4. param top_k: Top-K 후보 추출 범위 (기본값 200)
+        4. param top_k: Top-K 후보 추출 범위 (기본값 75)
         5. param similarity_threshold: 이 점수 미만인 논문은 truncate
         '''
         # 0. FAISS는 2차원(행렬)만 받는데 1차원 배열 받는 경우 처리 (예: 배치 결과 (50, 768) 하나씩 (768,) 쓰는 경우) 

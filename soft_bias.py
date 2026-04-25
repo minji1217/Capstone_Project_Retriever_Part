@@ -57,7 +57,13 @@ class SoftBiasScorer:
 
             # Decayed Sum 적용 : 1등은 1배, 2등은 0.5배, 3등은 0.25배, ... 
             weights = decay_factor ** np.arange(len(sorted_sims)) # 0,1,2,...
-            item['bib_score'] = float(np.sum(sorted_sims * weights))
+            
+            # [추가] 정규화 로직 : 가중 평균 계산 
+            # 이때 분모가 0이 되는 것을 방지하기 위해 아주 작은 값 (1e-9) 더해줌
+            raw_sum = np.sum(sorted_sims * weights)
+            weight_sum = np.sum(weights) # <-
+            
+            item['bib_score'] = float(raw_sum / (weight_sum + 1e-9)) # <-
 
             
         return candidate_list

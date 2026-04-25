@@ -42,7 +42,7 @@ class OnlinePaperProcess:
         p_res = self.retriever.search(p_vec, [req_id], source=["paper"], similarity_threshold=-1.0)
         c_res = self.retriever.search(c_vec, [req_id], source=["context"], similarity_threshold=-1.0)
         
-        print(f" [Debug] p_res 타입: {type(p_res)}, 길이: {len(p_res)}")
+        print(f" [Debug] p_res 타입: {type(p_res)}, 길이: {len(p_res[0])}")
 
         # 4. RRF 융합
         fused = rank_fusion(p_res, c_res)[0]

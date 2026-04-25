@@ -2,6 +2,7 @@ import torch
 import numpy as np
 from transformers import AutoTokenizer
 from adapters import AutoAdapterModel
+from adapters import Stack
 import config
 
 class SpecterEmbedder:
@@ -18,9 +19,14 @@ class SpecterEmbedder:
         self.model = AutoAdapterModel.from_pretrained(model_name)
 
         # 2. 특정 어댑터(Proximity) 로드 및 활성화 
-        print(f"[{adapter_name}] 어댑터 장착 중...")
-        self.model.load_adapter(adapter_name, source = "hf", set_active = True) # hugging face 저장소에서 어댑터 다운로드, 어댑터 장착하자마자 바로 활성화
-
+        # [수정 1] load_adapter가 뱉어내는 '실제 이름(예: PRX)'을 변수에 저장
+        self.active_adapter_name = self.model.load_adapter(adapter_name, source="hf")
+        
+        # [수정 2] PEFT 함수(enable_adapters)는 삭제하고, adapters 전용 함수 사용
+        self.model.set_active_adapters(self.active_adapter_name)
+        
+        # (선택) 확실히 활성화되었는지 확인하는 로그
+        print(f"활성화된 어댑터: {self.model.active_adapters}")
         # 3. [Latency 최적화] FP16 연산 적용 
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -66,7 +72,7 @@ class SpecterEmbedder:
 
             # 6. 연산 최적화: 기울기 계산을 끄고 사전학습된 SPECTER2 가중치 사용하여 임베딩 
             with torch.no_grad():
-                outputs = self.model(**inputs) # 딕셔너리 자동으로 언패킹 (input_ids, attention_mask)
+                outputs = self.model(**inputs, adapter_names = [self.active_adapter_name]) # 딕셔너리 자동으로 언패킹 (input_ids, attention_mask)
                 
                 # 7. 문장 임베딩 추출: SPECTER2는 항상 첫 번째 토큰([CLS])을 해당 문장의 대표 벡터로 사용
                 # shape: (batch_size, sequence_length, 768) -> (batch_size, 768)

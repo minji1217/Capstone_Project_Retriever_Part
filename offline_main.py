@@ -100,6 +100,7 @@ def process_paper_batch(paper_batch, query_builder, embedder, retriever, bib_sco
         query_packet = {
             "query_id": meta['query_id'],
             'target_ids': meta['target_ids'],
+            'context': meta['context_query'],
             'candidates': clean_candidates
         }
         

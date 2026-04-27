@@ -70,6 +70,7 @@ class UnifiedOnlinePaperProcess:
 
         return {
             "query_id": req_id,
+            'context': user_input.get('context', ''),
             "candidates": clean_candidates
         }
     

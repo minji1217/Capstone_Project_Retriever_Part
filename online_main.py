@@ -108,7 +108,7 @@ if __name__ == "__main__":
     else:
         print("후보가 없습니다! 위쪽 Debug 로그에서 어디서 0이 되었는지 확인하세요.")
 
-    utils.save_json(result, "output.json")
+    utils.save_json(result, "online_output.json")
     print("output.json에 저장")
 
 

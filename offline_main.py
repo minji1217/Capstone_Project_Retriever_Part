@@ -152,5 +152,5 @@ def run_pipeline(data_path, paper_batch_size):
 
 if __name__ == "__main__":
     final_data = run_pipeline(config.EVAL_DATA_PATH, config.PAPER_BATCH_SIZE)
-    utils.save_json("retriever.json", final_data) 
+    utils.save_json(final_data, "offline_output.json") 
     print("'retriever.json' 저장 완료")

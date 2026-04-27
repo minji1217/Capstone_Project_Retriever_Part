@@ -56,3 +56,9 @@ def get_timestamp():
     형식: YYYYMMDD_HHMMSS_밀리초 (예: 20260423_143154_123)
     """
     return datetime.datetime.now().strftime("%Y%m%d_%H%M%S_%f")[:19]
+
+def truncate_words(text, max_words):
+    """단어 단위로 텍스트를 제한"""
+    if not text: return ""
+    words = text.split()
+    return " ".join(words[:max_words])

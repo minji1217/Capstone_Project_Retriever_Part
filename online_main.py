@@ -20,7 +20,7 @@ class OnlinePaperProcess:
 
         print(f"[로딩 완료 ({time.time() - start: .2f}초 소요)]")
 
-    def get_features(self, user_input):
+    def run_pipeline(self, user_input):
         '''
         프론트엔드에서 온 데이터 받아서 최종 피처 반환
         - user_input : { "title" : str, "abstract" : str, "context" : str, "bib_ids" : list}
@@ -39,8 +39,8 @@ class OnlinePaperProcess:
         p_vec, c_vec = vecs[0:1], vecs[1:2]
 
         # 3. FAISS 고속 검색
-        p_res = self.retriever.search(p_vec, [req_id], source=["paper"], similarity_threshold=-1.0)
-        c_res = self.retriever.search(c_vec, [req_id], source=["context"], similarity_threshold=-1.0)
+        p_res = self.retriever.search(p_vec, [req_id], source=["paper"])
+        c_res = self.retriever.search(c_vec, [req_id], source=["context"])
         
         print(f" [Debug] p_res 타입: {type(p_res)}, 길이: {len(p_res[0])}")
 
@@ -91,7 +91,7 @@ if __name__ == "__main__":
     start_time = time.time()
     
     # 파이프라인 가동!
-    result = engine.get_features(sample)
+    result = engine.run_pipeline(sample)
     
     print(f"처리 완료! 소요 시간: {time.time() - start_time:.4f}초")
     print(f"반환된 후보 개수: {len(result['candidates'])}개")

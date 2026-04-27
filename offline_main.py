@@ -140,13 +140,13 @@ def run_pipeline(data_path, paper_batch_size):
 
         batch_results = process_paper_batch(paper_batch, query_builder, embedder, retriever, bib_scorer)
         
-        # 다음 파트에 합치기 (batch_results 이용할지 말지)
+        all_processed_queries.extend(batch_results)# 다음 파트에 합치기 (batch_results 이용할지 말지)
     
     
     print(f"[최종 성능 평가 결과]")
     print(f"총 소요시간 : {time.time() - start_time: .2f}초")
 
-    # 뭐를 return할지 
+    return all_processed_queries
 
     
 

@@ -99,11 +99,11 @@ if __name__ == "__main__":
     
     # 리스트가 비어있을 때 IndexError가 나지 않도록 조건문 추가
     if len(result['candidates']) > 0:
-        print(f"첫 번째 후보 샘플: {result['candidates'][0]}")
-        print(f"첫 번째 후보 샘플: {result['candidates'][1]}")
-        print(f"첫 번째 후보 샘플: {result['candidates'][2]}")
-        print(f"첫 번째 후보 샘플: {result['candidates'][3]}")
-        print(f"첫 번째 후보 샘플: {result['candidates'][4]}")
+        print(f"1번째 후보 샘플: {result['candidates'][0]}")
+        print(f"2번째 후보 샘플: {result['candidates'][1]}")
+        print(f"3번째 후보 샘플: {result['candidates'][2]}")
+        print(f"4번째 후보 샘플: {result['candidates'][3]}")
+        print(f"5번째 후보 샘플: {result['candidates'][4]}")
         
     else:
         print("후보가 없습니다! 위쪽 Debug 로그에서 어디서 0이 되었는지 확인하세요.")

@@ -23,6 +23,7 @@ def process_paper_batch(paper_batch, query_builder, embedder, retriever, bib_sco
         paper_query, context_queries = query_builder.extract_all_samples(
             paper_id, item.get('full_text',''), item.get('title', ''), item.get('abstract',''), item.get('all_references', [])
         )
+        
 
         # 전역 쿼리는 논문당 1번만 저장
         unique_paper_queries[paper_id] = paper_query
@@ -33,6 +34,7 @@ def process_paper_batch(paper_batch, query_builder, embedder, retriever, bib_sco
             metadata_list.append(sample) 
 
     total_samples = len(context_query_list)
+    print(f"context 개수: {len(context_query_list)}")
 
     # 가져온 논문 32개 모두 인용구 하나도 없다면 패스 
     if total_samples == 0: return []
@@ -96,13 +98,13 @@ def process_paper_batch(paper_batch, query_builder, embedder, retriever, bib_sco
                 "bib_score": float(norm_bibs[idx])
             })
 
-        query_pakcet = {
+        query_packet = {
             "query_id": meta['query_id'],
             'target_ids': meta['target_ids'],
             'candidates': clean_candidates
         }
         
-        final_output_for_next.append(query_pakcet)
+        final_output_for_next.append(query_packet)
 
     return final_output_for_next
 
@@ -153,4 +155,4 @@ def run_pipeline(data_path, paper_batch_size):
 if __name__ == "__main__":
     final_data = run_pipeline(config.EVAL_DATA_PATH, config.PAPER_BATCH_SIZE)
     utils.save_json(final_data, "offline_output.json") 
-    print("'retriever.json' 저장 완료")
+    print("'offline_output.json' 저장 완료")

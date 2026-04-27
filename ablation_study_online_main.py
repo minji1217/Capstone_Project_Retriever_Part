@@ -94,10 +94,14 @@ if __name__ == "__main__":
     print(f"처리 완료! 소요 시간: {time.time() - start_time:.4f}초")
     print(f"반환된 후보 개수: {len(result['candidates'])}개")
     
-    # 리스트가 비어있을 때 IndexError 방지
+    # 리스트가 비어있을 때 IndexError가 나지 않도록 조건문 추가
     if len(result['candidates']) > 0:
-        for i in range(min(5, len(result['candidates']))):
-            print(f"{i+1}번째 후보 샘플: {result['candidates'][i]}")
+        print(f"1번째 후보 샘플: {result['candidates'][0]}")
+        print(f"2번째 후보 샘플: {result['candidates'][1]}")
+        print(f"3번째 후보 샘플: {result['candidates'][2]}")
+        print(f"4번째 후보 샘플: {result['candidates'][3]}")
+        print(f"5번째 후보 샘플: {result['candidates'][4]}")
+        
     else:
         print("후보가 없습니다! 위쪽 Debug 로그에서 어디서 0이 되었는지 확인하세요.")
 

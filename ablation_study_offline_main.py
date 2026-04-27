@@ -64,7 +64,7 @@ def process_paper_batch(paper_batch, query_builder, embedder, retriever, bib_sco
         raw_bibs = [c.get('bib_score', 0.0) for c in biased]
 
         norm_sims = utils.normalize(raw_sims)
-        norm_bibs = utils.normalize(np.log1p(raw_bibs))
+        norm_bibs = utils.normalize(raw_bibs)
 
         # top-100 각 논문에 대해 필요한 피처만 추출
         clean_candidates = []

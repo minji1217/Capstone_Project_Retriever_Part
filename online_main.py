@@ -59,7 +59,7 @@ class OnlinePaperProcess:
         raw_bibs = [c.get('bib_score', 0.0) for c in biased]
 
         norm_sims = utils.normalize(raw_sims)
-        norm_bibs = utils.normalize(np.log1p(raw_bibs))
+        norm_bibs = utils.normalize(raw_bibs)
 
         # 7. 최종 데이터 형식 가공
         clean_candidates = []

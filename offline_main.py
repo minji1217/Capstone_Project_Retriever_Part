@@ -116,7 +116,7 @@ def run_pipeline(data_path, paper_batch_size):
     '''
     [동작 방식] 전체 데이터셋을 논문 단위로 쪼개고, 논문 내에서도 context 단위로 쪼개어 동작
     '''
-    print("[Offline 실험용 추천 파이프라인 가동 시작...] (데이터: {data_path}")
+    print("f[Offline 실험용 추천 파이프라인 가동 시작...] (데이터: {data_path}")
     start_time = time.time()
 
     # 1. 모듈 생성 

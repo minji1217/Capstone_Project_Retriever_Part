@@ -23,9 +23,9 @@ def process_paper_batch(paper_batch, query_builder, embedder, retriever, bib_sco
         )
 
         for sample in context_queries:
-            safe_context = utils.truncate_words(sample['context_query'], 150)
+            safe_context = sample['context_query']
             safe_title = utils.truncate_words(title, 30)
-            safe_abstract = utils.truncate_words(abstract, 200)
+            safe_abstract = utils.truncate_words(abstract, 280)
 
             # context first 결합 : context [SEP] title [SEP] abstract
             unified_text = f"{safe_context} [SEP] {safe_title} [SEP] {safe_abstract}"

@@ -31,9 +31,17 @@ class UnifiedOnlinePaperProcess:
         # 1. 토큰 제한 및 쿼리 결합
         # context first 전략 : 가장 중요한 현재 문맥을 맨 앞에 배치
         # 약 195/39/260 토큰 (토큰 = 1.3배*단어)
-        safe_context = utils.truncate_words(user_input.get('context', ''), 150)
+
+        # 1. QueryBuilder 통해 context는 정확하게 100토큰 가져옴 
+        _, safe_context = self.query_builder.build_online_query(
+            user_input_text=user_input.get('context', ''),
+            title=user_input.get('title', ''),
+            abstract=user_input.get('abstract', '')
+        )
+
+        # 2. Title과 Abstract는 512토큰 방어용으로 단어 수 자르기
         safe_title = utils.truncate_words(user_input.get('title', ''), 30)
-        safe_abstract = utils.truncate_words(user_input.get('abstract', ''), 200)
+        safe_abstract = utils.truncate_words(user_input.get('abstract', ''), 280)
 
         unified_text = f"{safe_context} [SEP] {safe_title} [SEP] {safe_abstract}"
 

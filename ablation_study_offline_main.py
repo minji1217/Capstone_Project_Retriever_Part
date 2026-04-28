@@ -18,7 +18,7 @@ def process_paper_batch(paper_batch, query_builder, embedder, retriever, bib_sco
         abstract = item.get('abstract', '')
 
         # QueryBuilder 통해 해당 논문의 모든 인용구 추출
-        _, context_queries = query_builder.extract_all_samples(
+        _, context_queries = query_builder.build_offline_query(
             paper_id, item.get('full_text', ''), title, abstract, item.get('all_references', [])
         )
 

@@ -20,7 +20,7 @@ def process_paper_batch(paper_batch, query_builder, embedder, retriever, bib_sco
         paper_id = item.get('paper_id', '')
 
         # QueryBuilder를 통해 paper query 1개, context query N개 추출 
-        paper_query, context_queries = query_builder.extract_all_samples(
+        paper_query, context_queries = query_builder.build_offline_query(
             paper_id, item.get('full_text',''), item.get('title', ''), item.get('abstract',''), item.get('all_references', [])
         )
         

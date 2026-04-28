@@ -13,7 +13,7 @@ class QueryBuilder:
         # SPECTER2 모델이 읽을 수 있는 형태로 글자 잘라주는 도구 
         self.tokenizer = AutoTokenizer.from_pretrained(model_name) 
 
-    def extract_all_samples(self, paper_id, full_text, title, abstract, all_references, window_size = config.WINDOW_SIZE):
+    def build_offline_query(self, paper_id, full_text, title, abstract, all_references, window_size = config.WINDOW_SIZE):
         '''
         [다중 인용 처리]
         논문 한 편의 전체 텍스트에서 모든 [CITE] 위치를 찾아 
